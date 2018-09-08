@@ -108,3 +108,8 @@ venv.bak/
 
 # Whl
 *.whl
+
+# XML(unittests coverage)
+*.xml
+coverage
+.coverage
