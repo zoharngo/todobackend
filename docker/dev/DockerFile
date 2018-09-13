@@ -3,7 +3,7 @@ MAINTAINER Zohar Nyego <zoharngo@gmail.com>
 
 # Install dev/build dependencies
 RUN apt-get update && \
-    apt-get install -qy python-dev libmysqlclient-dev
+    apt-get install -qy gcc python-dev libmysqlclient-dev
 
 # Activate virtual envirnoment and install wheel support
 RUN . /appenv/bin/activate && \
