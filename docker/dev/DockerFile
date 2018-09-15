@@ -20,6 +20,7 @@ VOLUME /reports
 
 # Add test entrypoint script
 COPY scripts/test.sh /usr/local/bin/test.sh
+COPY scripts/wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/test.sh
 
 # Set defaults for entrypoint and command string

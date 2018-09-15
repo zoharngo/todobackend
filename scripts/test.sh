@@ -7,4 +7,6 @@
 pip install -r requirements_test.txt
 
 # Run test.sh arguments
+wait-for-it.sh db:3306 -s -t 5 -- echo 'db up'
+
 exec $@
