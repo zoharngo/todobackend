@@ -3,8 +3,11 @@
 # Activate virtual environment
 . /appenv/bin/activate
 
-# Install application test requirements_test.txt
-pip install -r requirements_test.txt
+# Download requirements to build cache
+pip download -d /build -r requirements_test.txt --no-input 
+
+# Install application test requirements
+pip install --no-index -f /build -r requirements_test.txt
 
 # Run test.sh arguments
 wait-for-it.sh db:3306 -s -t 5 -- echo 'db up'
