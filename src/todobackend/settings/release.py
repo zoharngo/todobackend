@@ -2,7 +2,7 @@ from base import *
 import os
 
 # Disable debug
-if os.environ.get('debug'):
+if os.environ.get('DEBUG'):
     DEBUG = True
 else:
     DEBUG = False
@@ -18,7 +18,10 @@ DATABASES = {
         'USER': os.environ.get('MYSQL_USER', 'todo'),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'password'),
         'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
-        'PORT': os.environ.get('MYSQL_PORT', '3306'),        
+        'PORT': os.environ.get('MYSQL_PORT', '3306'), 
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }   
     }
 }
 
