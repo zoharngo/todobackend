@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 # Activate virtual envirnoment and install wheel support
 RUN . /appenv/bin/activate && \
-    pip install wheel --upgrade
+    pip install wheel setuptools --upgrade
 
 # PIP environment variables (NOTE: must be set after installtion wheel)
 ENV WHEELHOUSE=/wheelhouse PIP_WHEEL_DIR=/wheelhouse PIP_FIND_LINKS=/wheelhouse XDG_CACHE_HOME=/cache

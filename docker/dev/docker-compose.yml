@@ -20,7 +20,7 @@ builder:
   volumes_from: 
     - cache
   entrypoint: "entrypoint.sh"
-  command: ["pip","wheel","--no-index","-f","/build","."]
+  command: ["pip","wheel","--no-index","-f /build","."]
   
 db:
   image: mysql:5.6
