@@ -1,4 +1,4 @@
-From zoharn/todobackend-base:latest
+From 2251985/todobackend-base:latest
 MAINTAINER Zohar Nyego <zoharngo@gmail.com>
 
 # Install dev/build dependencies

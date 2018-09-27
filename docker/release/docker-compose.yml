@@ -20,7 +20,7 @@ app:
     - --die-on-term
 
 test:
-  image: zoharn/todobackend-specs
+  image: 2251985/todobackend-specs
   links: 
     - nginx
   environment: 

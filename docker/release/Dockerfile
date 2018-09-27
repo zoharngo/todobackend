@@ -1,5 +1,5 @@
-FROM zoharn/todobackend-base:latest
-MAINTAINER Zohar Nyego
+FROM 2251985/todobackend-base:latest
+MAINTAINER Zohar Nyego <zoharngo@gmail.com>
 
 # Copy application artifacts
 COPY target /wheelhouse
