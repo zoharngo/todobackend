@@ -29,7 +29,8 @@ test:
   command: --reporter mocha-jenkins-reporter
 
 nginx: 
-  image: nginx
+  build: .
+  dockerfile: Dockerfile.nginx
   links: 
     - app
   volumes: 
