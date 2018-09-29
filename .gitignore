@@ -113,3 +113,7 @@ venv.bak/
 *.xml
 coverage
 .coverage
+
+# Ignore build and test artifacts
+reports
+target
