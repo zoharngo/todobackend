@@ -4,7 +4,14 @@
 . /appenv/bin/activate
 
 # Wait until DB service is ready
-wait-for-it.sh db:3306 -s -t 10 -- echo 'db up'
+wait_for_it (){
+    wait-for-it.sh db:3306 -s -t 10
+    return $?
+}
 
-exec $@
+if [[ $(wait_for_it) -eq 0 ]]; then 
+    exec $@
+else
+    exit $?
+fi
 

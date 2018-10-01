@@ -11,19 +11,28 @@ REL_COMPOSE_FILE := docker/release/docker-compose.yml
 REL_PROJECT := $(PROJECT_NAME)$(BUILD_ID)
 DEV_PROJECT := $(REL_PROJECT)dev
 
+# Check and Inspect Logic
+INSPECT := $$(docker-compose -p $$1 -f $$2 ps -q $$3 | xargs -I ARGS docker inspect -f "{{ .State.ExitCode }}" ARGS)
+
+CHECK := @bash -c '\
+		 if [[ $(INSPECT) -ne 0 ]]; \
+		 then exit $(INSPECT) ; fi' VALUE
+
 .PHONY: test build release clean
 
 test:
 	${INFO} "Building images..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build
-	${INFO} "Download and install test dependendcies and finally runnig unit tests..."
+	${INFO} "Download and install test dependendcies and finally running unit tests..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up test	
 	@ docker cp $$(docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) ps -q test):/reports/. reports
+	${CHECK} $(DEV_PROJECT) $(DEV_COMPOSE_FILE) test
 	${INFO} "Testing complete" 
 # $$ - means get process id of container id
 build:
 	${INFO} "Building application artifacts..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up builder
+	${CHECK} $(DEV_PROJECT) $(DEV_COMPOSE_FILE) builder
 	${INFO} "Copying artifacts to target folder..."
 	@ docker cp $$(docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) ps -q builder):/wheelhouse/. target
 	${INFO} "Build complete"
@@ -37,6 +46,7 @@ release:
 	${INFO} "Runnig acceptance tests..."
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) up test
 	@ docker cp $$(docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) ps -q test):/reports/. reports
+	${CHECK} $(REL_PROJECT) $(REL_COMPOSE_FILE) test
 	${INFO} "Accpetance testing complete"
 clean:
 	${INFO} "Destroying development environment..."
