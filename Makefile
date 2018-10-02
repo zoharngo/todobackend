@@ -1,3 +1,4 @@
+
 # Project variables
 PROJECT_NAME ?= todobackend
 ORG_NAME ?= 2251985
@@ -20,18 +21,29 @@ CHECK := @bash -c '\
 
 .PHONY: test build release clean
 
+	# COMMENTS #
+	# --pull:: Pulling flag fetch latest parent image from regisetry ,
+	# after it next service which are also extends parent image would not need --pull flag to ansure conssistentcy between
+	# workflow
+
+	# $$ - means get process id of container id
 test:
+	${INFO} "Pull lastest images..."
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) pull
 	${INFO} "Building images..."
-	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build --pull test
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build cache
 	${INFO} "Strarting up agent service..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up agent
-	${INFO} "Download and install test dependendcies and finally running unit tests..."
+	${INFO} "Download and install test requirements and running unit tests..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up test	
 	@ docker cp $$(docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) ps -q test):/reports/. reports
 	${CHECK} $(DEV_PROJECT) $(DEV_COMPOSE_FILE) test
 	${INFO} "Testing complete" 
-# $$ - means get process id of container id
+
 build:
+	${INFO} "Building images..."
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build builder
 	${INFO} "Building application artifacts..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up builder
 	${CHECK} $(DEV_PROJECT) $(DEV_COMPOSE_FILE) builder
@@ -39,8 +51,12 @@ build:
 	@ docker cp $$(docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) ps -q builder):/wheelhouse/. target
 	${INFO} "Build complete"
 release:
+	${INFO} "Pull lastest images..."
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) pull test
 	${INFO} "Building images..."
-	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build app
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build webroot
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build --pull nginx	
 	${INFO} "Strarting up agent service..."
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) up agent
 	${INFO} "Collecting static files..."

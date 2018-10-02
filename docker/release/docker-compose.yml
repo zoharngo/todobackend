@@ -58,7 +58,7 @@ db:
     MYSQL_ROOT_PASSWORD: password
 
 agent:
-  image: 2251985/ansible
+  image: 2251985/docker-ansible
   links: 
     - db
   environment: 
