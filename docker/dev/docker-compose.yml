@@ -21,14 +21,14 @@ builder:
   entrypoint: "entrypoint.sh"
   command: ["pip","wheel","--no-index","-f /build","."]
 
-#agent:
-  #image: 2251985/ansible
-  #links: 
-    #- db
-  #environment: 
-    #PROBE_HOST: db
-    #PROBE_PORT: "3306"
-  #command: ["probe.yml"]
+agent:
+  image: 2251985/ansible
+  links: 
+    - db
+  environment: 
+    PROBE_HOST: db
+    PROBE_PORT: "3306"
+  command: ["probe.yml"]
 
 db:
   image: mysql:5.6
