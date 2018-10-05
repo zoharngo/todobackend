@@ -4,8 +4,8 @@ ORG_NAME ?= 2251985
 REPO_NAME ?= todobackend
 
 # Filenames
-DEV_COMPOSE_FILE := docker/dev/docker-compose-v2.yml
-REL_COMPOSE_FILE := docker/release/docker-compose-v2.yml
+DEV_COMPOSE_FILE := docker/dev/docker-compose.yml
+REL_COMPOSE_FILE := docker/release/docker-compose.yml
 
 # Docker Compose Project Name
 REL_PROJECT := $(PROJECT_NAME)$(BUILD_ID)
@@ -48,12 +48,11 @@ DOCKER_REGISTRY_AUTH ?=
 	# $$ - means get process id of container id
 
 test:
-	${INFO} "Creating cache volume..."
-	@ docker volume create --name cache
 	${INFO} "Pull lastest images..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) pull
 	${INFO} "Building images..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build --pull test
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) build cache
 	${INFO} "Strarting up agent service..."
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up agent
 	${INFO} "Download and install test requirements and running unit tests..."
@@ -77,6 +76,7 @@ release:
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) pull test
 	${INFO} "Building images..."
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build app
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build webroot
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) build --pull nginx	
 	${INFO} "Strarting up agent service..."
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) up agent
@@ -92,9 +92,11 @@ release:
 
 clean:
 	${INFO} "Destroying development environment..."
-	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) down -v
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) kill
+	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) rm -f -v
 	${INFO} "Destroying release environment..."
-	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) down -v
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) kill
+	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) rm -f -v
 	${INFO} "Removing dangling images"
 	@ docker images -q -f dangling=true -f label=application=$(REPO_NAME) | xargs -I ARGS docker rmi -f ARGS 
 	${INFO} "Clean complete"
