@@ -112,12 +112,12 @@ buildtag:
 login:
 	${INFO} "Logging in to Docker registry $$DOCKER_REGISTRY..."
 	@ docker login -u $$DOCKER_USER -p $$DOCKER_PASSWORD $(DOCKER_REGISTRY_AUTH)
-	${INFO} "Logged in to Docker registry $$DOCKER_REGISTRY"
+	${INFO} "Logged in complete"
 
 logout:
 	${INFO} "Logging out to Docker registry $$DOCKER_REGISTRY..."
 	@ docker logout
-	${INFO} "Logged out to Docker registry $$DOCKER_REGISTRY..."
+	${INFO} "Logged out complete"
 
 publish:
 	${INFO} "Publishing release image $(IMAGE_ID) to $(DOCKER_REGISTRY)/$(ORG_NAME)/$(REPO_NAME)..."
