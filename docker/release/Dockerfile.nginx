@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:1.23.1
 MAINTAINER Zohar Nyego <zoharngo@gmail.com>
 
 # Copy configuration file
